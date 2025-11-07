@@ -451,13 +451,16 @@ export class ChatRoom implements DurableObject {
         break;
 
       case 'file_history':
+        if (!filters.filePath) {
+          throw new Error('`filePath` filter is required for `file_history` query type.');
+        }
         sql = `
           SELECT * FROM file_locks
           WHERE room_id = ? AND file_path = ?
           ORDER BY locked_at DESC
           LIMIT ? OFFSET ?
         `;
-        params = [this.roomState.roomId, filters.filePath || '', limit, offset];
+        params = [this.roomState.roomId, filters.filePath, limit, offset];
         break;
 
       case 'rooms':
