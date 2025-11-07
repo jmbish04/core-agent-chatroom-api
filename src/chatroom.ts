@@ -100,7 +100,7 @@ export class ChatRoom implements DurableObject {
 
     // Parse agent info from URL or headers
     const url = new URL(request.url);
-    const agentId = url.searchParams.get('agentId') || `agent-${Date.now()}`;
+    const agentId = url.searchParams.get('agentId') || crypto.randomUUID();
     const agentName = url.searchParams.get('agentName') || agentId;
     const roomId = this.roomState.roomId;
 
