@@ -1,0 +1,13 @@
+{
+  "name": "chatroom-examples",
+  "version": "1.0.0",
+  "description": "Example clients for Core Agent Chatroom API",
+  "private": true,
+  "scripts": {
+    "test": "node test-client.js",
+    "mcp": "node mcp-websocket-client.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.2"
+  }
+}

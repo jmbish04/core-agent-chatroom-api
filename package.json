@@ -1,0 +1,29 @@
+{
+  "name": "core-agent-chatroom-api",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker with Durable Objects for multi-agent coordination via WebSockets",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "setup": "wrangler d1 create chatroom-db && npm run migrate",
+    "migrate": "wrangler d1 execute chatroom-db --remote --file=./schema.sql",
+    "migrate:local": "wrangler d1 execute chatroom-db --local --file=./schema.sql",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "durable-objects",
+    "websockets",
+    "multi-agent",
+    "coordination"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.90.0"
+  }
+}

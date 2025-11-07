@@ -1,0 +1,27 @@
+name = "core-agent-chatroom-api"
+main = "src/index.ts"
+compatibility_date = "2024-11-07"
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Object bindings
+[[durable_objects.bindings]]
+name = "CHATROOM"
+class_name = "ChatRoom"
+script_name = "core-agent-chatroom-api"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "chatroom-db"
+database_id = "YOUR_DATABASE_ID"  # Will be set after running setup
+
+# Analytics Engine binding (optional, for enhanced logging)
+# [[analytics_engine_datasets]]
+# binding = "ANALYTICS"
+
+[build]
+command = "npx tsc"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["ChatRoom"]
