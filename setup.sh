@@ -52,7 +52,7 @@ DB_OUTPUT=$(wrangler d1 create chatroom-db 2>&1)
 echo "$DB_OUTPUT"
 
 # Extract database ID from output
-DB_ID=$(echo "$DB_OUTPUT" | grep -oP 'database_id = "\K[^"]+' | head -1)
+DB_ID=$(echo "$DB_OUTPUT" | grep 'database_id' | sed -E 's/.*database_id = "([^"]+)".*/\1/')
 
 if [ -z "$DB_ID" ]; then
     echo ""
