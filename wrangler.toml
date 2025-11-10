@@ -14,6 +14,7 @@ script_name = "core-agent-chatroom-api"
 binding = "DB"
 database_name = "core-agent-chatroom-api"
 database_id = "0753879d-2d0f-4bdc-9aa1-747566cc118d"
+migrations_dir = "migrations"
 
 # Analytics Engine binding (optional, for enhanced logging)
 # [[analytics_engine_datasets]]
