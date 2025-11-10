@@ -19,6 +19,10 @@ database_id = "0753879d-2d0f-4bdc-9aa1-747566cc118d"
 # [[analytics_engine_datasets]]
 # binding = "ANALYTICS"
 
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
 [build]
 command = "npx tsc"
 
