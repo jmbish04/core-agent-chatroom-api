@@ -12,8 +12,8 @@ script_name = "core-agent-chatroom-api"
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "chatroom-db"
-database_id = "YOUR_DATABASE_ID"  # Will be set after running setup
+database_name = "core-agent-chatroom-api"
+database_id = "0753879d-2d0f-4bdc-9aa1-747566cc118d"
 
 # Analytics Engine binding (optional, for enhanced logging)
 # [[analytics_engine_datasets]]
@@ -24,4 +24,4 @@ command = "npx tsc"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["ChatRoom"]
+new_sqlite_classes = ["ChatRoom"]
