@@ -12,10 +12,10 @@ export default {
 
     // Serve the main HTML page
     if (url.pathname === '/' || url.pathname === '/index.html') {
-      
-      return new Response(HTML_CONTENT, {
-        headers: { 'Content-Type': 'text/html' }
-      });
+      const indexHtmlResponse = await env.ASSETS.fetch(
+        new Request('/index.html', { headers: request.headers })
+      );
+      return indexHtmlResponse;
     }
 
     // WebSocket connections to rooms
