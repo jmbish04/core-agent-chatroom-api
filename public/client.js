@@ -469,9 +469,11 @@ const renderTestCards = (tests) => {
     header.appendChild(badgesContainer);
 
     // Hide the old category/severity details section since we moved them to badges
-    if (details) {
-      details.style.display = "none";
-    }
+    // Hide the old category/severity details section since we moved them to badges
+    // The `details` variable is not defined in this scope.
+    // if (details) {
+    //   details.style.display = "none";
+    // }
 
     container.appendChild(node);
   });
