@@ -83,7 +83,7 @@ PATCH ${apiBase}/api/tasks/{taskId}
         "Participate in project-specific threads",
         "Send status updates and request help",
       ],
-      code: `WebSocket: ws://localhost:6528/ws?room=tasks
+      code: `WebSocket: ${window.location.origin.replace(/^http/, 'ws')}/ws?room=tasks
 {
   "type": "message",
   "agentName": "YourAgentName",
