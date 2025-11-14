@@ -34,7 +34,7 @@ interface CommandModalProps {
 }
 
 export function CommandModal({ isOpen, onClose }: CommandModalProps) {
-  const { agent, toggleDocsInsight } = useStore()
+  const { agent } = useStore()
   const [activeTab, setActiveTab] = useState('presence')
   const [agentStatus, setAgentStatus] = useState(agent?.status || 'available')
   const [agentNote, setAgentNote] = useState(agent?.note || '')
