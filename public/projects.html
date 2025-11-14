@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projects • Vibe Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="min-h-screen bg-slate-900">
+    <div id="nav"></div>
+
+    <main class="container mx-auto px-4 py-8">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-4">Projects</h1>
+        <p class="text-slate-300 mb-6">Manage and coordinate multi-agent development projects</p>
+
+        <!-- Create Project Button -->
+        <div class="flex gap-4 items-center mb-6">
+          <button id="create-project-btn" class="btn-primary">
+            Create New Project
+          </button>
+          <div class="flex gap-2">
+            <input id="search-projects" class="command-input" placeholder="Search projects..." />
+            <select id="filter-status" class="command-input">
+              <option value="">All Status</option>
+              <option value="planning">Planning</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects Grid -->
+      <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Projects will be loaded here -->
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="text-center py-12">
+        <div class="text-slate-400">Loading projects...</div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="text-center py-12 hidden">
+        <div class="text-slate-400 mb-4">No projects found</div>
+        <button id="create-first-project-btn" class="btn-primary">
+          Create Your First Project
+        </button>
+      </div>
+    </main>
+
+    <!-- Create Project Modal -->
+    <div id="create-project-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="text-2xl font-semibold text-indigo-100">Create New Project</h3>
+          <button id="close-create-modal" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="create-project-form" class="space-y-4">
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="project-title">Project Title</label>
+              <input id="project-title" name="title" class="command-input w-full" placeholder="Enter project title" required />
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="project-description">Description</label>
+              <textarea id="project-description" name="description" class="command-input w-full" rows="3" placeholder="Describe the project goals..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-slate-300/80 mb-2" for="project-priority">Priority</label>
+                <select id="project-priority" name="priority" class="command-input w-full">
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm text-slate-300/80 mb-2" for="project-target">Target Completion</label>
+                <input id="project-target" name="targetCompletion" type="date" class="command-input w-full" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="project-agent">Assign Lead Agent</label>
+              <select id="project-agent" name="assignedAgent" class="command-input w-full">
+                <option value="">Select agent...</option>
+                <!-- Agents will be loaded here -->
+              </select>
+            </div>
+
+            <div class="flex gap-3 pt-4">
+              <button type="submit" class="btn-primary flex-1">Create Project</button>
+              <button type="button" id="cancel-create" class="btn-secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Card Template -->
+    <template id="project-card-template">
+      <div class="v-card project-card">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex-1">
+            <h3 class="text-xl font-semibold text-white project-title">Project Title</h3>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="project-status status-badge">Status</span>
+              <span class="project-priority priority-badge">Priority</span>
+            </div>
+          </div>
+          <div class="project-menu">
+            <button class="text-slate-400 hover:text-white">&hellip;</button>
+          </div>
+        </div>
+
+        <p class="text-slate-300 project-description mb-4">Project description...</p>
+
+        <div class="flex items-center justify-between text-sm text-slate-400 mb-4">
+          <span class="project-agent">Agent: Unassigned</span>
+          <span class="project-target">Target: Not set</span>
+        </div>
+
+        <div class="flex items-center justify-between mb-4">
+          <div class="task-stats">
+            <span class="task-count">0 tasks</span>
+            <span class="epic-count">0 epics</span>
+          </div>
+          <div class="agent-count">
+            <span>0 agents</span>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <a href="#" class="btn-secondary text-sm px-3 py-1 project-link">View Project</a>
+          <button class="btn-outline text-sm px-3 py-1 project-edit">Edit</button>
+        </div>
+      </div>
+    </template>
+
+    <script src="/client.js" type="module"></script>
+  </body>
+</html>
+

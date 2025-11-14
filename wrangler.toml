@@ -1,16 +1,29 @@
 name = "core-agent-chatroom-api"
 main = "src/index.ts"
-compatibility_date = "2024-11-07"
+compatibility_date = "2025-03-07"
 compatibility_flags = ["nodejs_compat"]
+
+# Observability
+[observability]
+enabled = true
+head_sampling_rate = 1
 
 # Durable Object bindings
 [[durable_objects.bindings]]
 name = "CHATROOM"
 class_name = "ChatRoom"
 
+[[durable_objects.bindings]]
+name = "ROOM_DO"
+class_name = "RoomDO"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["ChatRoom"]
+
+[[migrations]]
+tag = "v2"
+new_classes = ["RoomDO"]
 
 
 # D1 Database binding
@@ -29,6 +42,9 @@ directory = "./public"
 binding = "ASSETS"
 
 [build]
-command = "npx tsc"
+command = "npm run build"
 
+# Cron trigger for agent monitoring (every 15 minutes)
+[triggers]
+crons = ["*/15 * * * *"]
 

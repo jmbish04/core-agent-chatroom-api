@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project • Vibe Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .project-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+        min-height: calc(100vh - 200px);
+      }
+
+      .project-main {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .project-sidebar {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        height: fit-content;
+      }
+
+      .epic-card {
+        background: rgba(51, 65, 85, 0.5);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .task-card {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .task-card:hover {
+        border-color: rgb(99, 102, 241);
+      }
+
+      .task-card.blocked {
+        border-color: rgb(239, 68, 68);
+        background: rgba(127, 29, 29, 0.3);
+      }
+
+      .task-card.blocked::before {
+        content: "🚫";
+        margin-right: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .agent-avatar {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgb(99, 102, 241), rgb(147, 51, 234));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: white;
+      }
+
+      .thread-item {
+        padding: 0.75rem;
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 0.375rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .thread-item:hover {
+        border-color: rgb(99, 102, 241);
+        background: rgba(99, 102, 241, 0.1);
+      }
+
+      .thread-item.active {
+        border-color: rgb(99, 102, 241);
+        background: rgba(99, 102, 241, 0.1);
+      }
+
+      .chat-message {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border-radius: 0.375rem;
+        background: rgba(51, 65, 85, 0.5);
+      }
+
+      .chat-input {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .chat-input textarea {
+        flex: 1;
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        border-radius: 0.375rem;
+        padding: 0.5rem;
+        color: rgb(241, 245, 249);
+        font-size: 0.875rem;
+        resize: none;
+      }
+
+      .chat-input textarea:focus {
+        outline: none;
+        border-color: rgb(99, 102, 241);
+      }
+
+      .reply-indicator {
+        margin-left: 2rem;
+        border-left: 2px solid rgb(99, 102, 241);
+        padding-left: 1rem;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-slate-900">
+    <div id="nav"></div>
+
+    <main class="container mx-auto px-4 py-8">
+      <!-- Project Header -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h1 id="project-title" class="text-3xl font-bold text-white">Loading Project...</h1>
+            <div class="flex items-center gap-4 mt-2">
+              <span id="project-status" class="status-badge">Status</span>
+              <span id="project-priority" class="priority-badge">Priority</span>
+              <span id="project-agent" class="text-slate-400">Agent: Loading...</span>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button id="add-task-btn" class="btn-primary">Add Task</button>
+            <button id="reassign-btn" class="btn-secondary">Reassign Tasks</button>
+            <button id="bulk-update-btn" class="btn-outline">Bulk Update</button>
+          </div>
+        </div>
+        <p id="project-description" class="text-slate-300">Loading project description...</p>
+      </div>
+
+      <!-- Project Layout -->
+      <div class="project-layout">
+        <!-- Main Content Area -->
+        <div class="project-main">
+          <h2 class="text-xl font-semibold text-white mb-4">Epics & Tasks</h2>
+
+          <div id="epics-container">
+            <!-- Epics and tasks will be loaded here -->
+            <div class="text-center py-12 text-slate-400">
+              Loading project data...
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="project-sidebar">
+          <!-- Chat Section -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-white">Project Chat</h3>
+              <button id="new-thread-btn" class="btn-outline text-sm">New Thread</button>
+            </div>
+
+            <!-- Threads List -->
+            <div id="threads-list" class="mb-4 max-h-48 overflow-y-auto">
+              <!-- Threads will be loaded here -->
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="min-h-64 max-h-96 overflow-y-auto mb-4 p-3 border border-slate-600 rounded">
+              <!-- Messages will be loaded here -->
+              <div class="text-center text-slate-400 py-8">
+                Select a thread to view messages
+              </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input">
+              <textarea id="chat-input" placeholder="Type your message..." rows="2"></textarea>
+              <button id="send-message-btn" class="btn-primary px-4 py-2">Send</button>
+            </div>
+          </div>
+
+          <!-- Agent Activity -->
+          <div>
+            <h3 class="text-lg font-semibold text-white mb-4">Agent Activity</h3>
+            <div id="agent-activity" class="space-y-2">
+              <!-- Agent activity will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Add Task Modal -->
+    <div id="add-task-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="text-2xl font-semibold text-indigo-100">Add New Task</h3>
+          <button id="close-add-task-modal" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="add-task-form" class="space-y-4">
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="task-title">Task Title</label>
+              <input id="task-title" name="title" class="command-input w-full" placeholder="Enter task title" required />
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="task-description">Description</label>
+              <textarea id="task-description" name="description" class="command-input w-full" rows="3" placeholder="Describe the task..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-slate-300/80 mb-2" for="task-priority">Priority</label>
+                <select id="task-priority" name="priority" class="command-input w-full">
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm text-slate-300/80 mb-2" for="task-epic">Epic (Optional)</label>
+                <select id="task-epic" name="epicId" class="command-input w-full">
+                  <option value="">No Epic</option>
+                  <!-- Epics will be loaded here -->
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="task-agent">Assign Agent</label>
+              <select id="task-agent" name="assignedAgent" class="command-input w-full">
+                <option value="">Unassigned</option>
+                <!-- Agents will be loaded here -->
+              </select>
+            </div>
+
+            <div class="flex gap-3 pt-4">
+              <button type="submit" class="btn-primary flex-1">Create Task</button>
+              <button type="button" id="cancel-add-task" class="btn-secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Thread Modal -->
+    <div id="new-thread-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="text-2xl font-semibold text-indigo-100">Start New Thread</h3>
+          <button id="close-new-thread-modal" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="new-thread-form" class="space-y-4">
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="thread-subject">Subject</label>
+              <input id="thread-subject" name="subject" class="command-input w-full" placeholder="Thread subject..." required />
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="thread-message">Initial Message</label>
+              <textarea id="thread-message" name="message" class="command-input w-full" rows="4" placeholder="Start the conversation..." required></textarea>
+            </div>
+
+            <div class="flex gap-3 pt-4">
+              <button type="submit" class="btn-primary flex-1">Create Thread</button>
+              <button type="button" id="cancel-new-thread" class="btn-secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Card Template -->
+    <template id="task-card-template">
+      <div class="task-card" data-task-id="">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h4 class="text-white font-medium task-title">Task Title</h4>
+              <span class="task-status status-badge">Status</span>
+            </div>
+            <p class="text-slate-300 text-sm task-description">Task description...</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="agent-avatar task-agent-avatar" title="Assigned Agent">?</div>
+            <div class="task-menu">
+              <button class="text-slate-400 hover:text-white text-sm">&hellip;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Epic Card Template -->
+    <template id="epic-card-template">
+      <div class="epic-card" data-epic-id="">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold text-white epic-title">Epic Title</h3>
+          <div class="epic-menu">
+            <button class="text-slate-400 hover:text-white">&hellip;</button>
+          </div>
+        </div>
+        <p class="text-slate-300 text-sm epic-description mb-3">Epic description...</p>
+        <div class="flex items-center gap-4 text-sm text-slate-400">
+          <span class="epic-status">Status: Planning</span>
+          <span class="epic-priority">Priority: Medium</span>
+        </div>
+        <div class="epic-tasks mt-3">
+          <!-- Tasks will be loaded here -->
+        </div>
+      </div>
+    </template>
+
+    <!-- Thread Item Template -->
+    <template id="thread-item-template">
+      <div class="thread-item" data-thread-id="">
+        <div class="thread-subject font-medium text-white">Thread Subject</div>
+        <div class="thread-meta text-xs text-slate-400 mt-1">
+          <span class="thread-author">Author</span> •
+          <span class="thread-time">Time</span> •
+          <span class="thread-messages">0 messages</span>
+        </div>
+      </div>
+    </template>
+
+    <!-- Message Template -->
+    <template id="message-template">
+      <div class="chat-message" data-message-id="">
+        <div class="flex items-start gap-3">
+          <div class="agent-avatar message-avatar" title="Sender">?</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="message-author font-medium text-white">Author</span>
+              <span class="message-time text-xs text-slate-400">Time</span>
+              <button class="message-reply text-xs text-slate-400 hover:text-white" data-message-id="">Reply</button>
+            </div>
+            <div class="message-content text-slate-200">Message content...</div>
+            <div class="message-replies mt-2">
+              <!-- Replies will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script src="/client.js" type="module"></script>
+  </body>
+</html>
+

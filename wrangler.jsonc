@@ -1,0 +1,73 @@
+{
+  "name": "core-agent-chatroom-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CHATROOM",
+        "class_name": "ChatRoom"
+      },
+      {
+        "name": "ROOM_DO",
+        "class_name": "RoomDO"
+      },
+      {
+        "name": "AGENT_ROOM_DO",
+        "class_name": "AgentRoomDO"
+      },
+      {
+        "name": "CLOUDFLARE_DOCS_MCP",
+        "class_name": "CloudflareDocsMcpAgent"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["ChatRoom"]
+    },
+    {
+      "tag": "v2",
+      "new_classes": ["RoomDO"]
+    },
+    {
+      "tag": "v3",
+      "new_classes": ["AgentRoomDO"]
+    },
+    {
+      "tag": "v4",
+      "new_classes": ["CloudflareDocsMcpAgent"]
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "core-agent-chatroom-api",
+      "database_id": "0753879d-2d0f-4bdc-9aa1-747566cc118d",
+      "migrations_dir": "migrations"
+    },
+    {
+      "binding": "DB_PREVIEW",
+      "database_name": "core-agent-chatroom-api-preview",
+      "database_id": "c71babbd-ad7b-445e-9e51-96f3b5d31ddd",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+  "build": {
+    "command": "npx tsc"
+  }
+}
