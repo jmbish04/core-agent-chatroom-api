@@ -42,7 +42,7 @@ export function Chatroom() {
       setIsConnected(false)
     })
 
-    client.on('message', (message: any) => {
+    client.on('message', (message: { type: string; taskId?: string; agentName?: string; content: string }) => {
       const newMsg: Message = {
         id: crypto.randomUUID(),
         taskId: message.taskId,
