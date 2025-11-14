@@ -1,6 +1,14 @@
-# 🤖 Core Agent Chatroom API
+# 🤖 Vibe Systems Control Plane
 
-A Cloudflare Worker-based WebSocket service for multi-agent coordination and communication. Enables AI agents to collaborate, prevent duplicate file creation, and maintain synchronization through real-time messaging and file locking mechanisms.
+A complete multi-agent coordination platform built on Cloudflare Workers, featuring real-time WebSocket communication, task management, and a modern React frontend deployed to Cloudflare Pages.
+
+## 🏗️ Architecture
+
+- **Backend**: Cloudflare Worker with Durable Objects for multi-agent coordination via WebSockets
+- **Frontend**: React + Vite + HeroUI application deployed to Cloudflare Pages
+- **Database**: D1 for persistent data storage
+- **Real-time**: WebSocket communication between agents
+- **MCP**: Model Context Protocol integration for documentation insights
 
 ## ✨ Features
 
@@ -64,16 +72,60 @@ npm run migrate:local
 npm run dev
 ```
 
-Visit `http://localhost:8787` to see the web interface.
+Visit `http://localhost:8787` to see the backend API and basic web interface.
+
+### Frontend Development
+
+To work on the React frontend:
+
+```bash
+# Install frontend dependencies
+npm run frontend:install
+
+# Start frontend development server
+npm run frontend:dev
+```
+
+The frontend will be available at `http://localhost:5173`.
+
+### Full Stack Development
+
+To run both backend and frontend together with a single command:
+
+```bash
+# Start both backend and frontend concurrently
+npm run dev:full
+
+# Or use the shorter alias
+npm start
+```
+
+This will start:
+- Backend server on `http://localhost:8787`
+- Frontend development server on `http://localhost:5173`
+
+If you prefer to run them separately:
+
+```bash
+# Terminal 1: Start backend
+npm run dev
+
+# Terminal 2: Start frontend
+npm run frontend:dev
+```
 
 ### Deployment
 
 ```bash
-# Deploy to Cloudflare Workers
+# Deploy backend to Cloudflare Workers
 npm run deploy
+
+# Deploy frontend to Cloudflare Pages
+npm run frontend:deploy
 ```
 
-Your worker will be available at `https://core-agent-chatroom-api.YOUR_SUBDOMAIN.workers.dev`
+Your backend worker will be available at `https://core-agent-chatroom-api.YOUR_SUBDOMAIN.workers.dev`
+Your frontend will be available at your Cloudflare Pages URL.
 
 ## 📖 Usage
 

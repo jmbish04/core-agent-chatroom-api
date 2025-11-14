@@ -1,0 +1,31 @@
+name = "vibe-systems-control-plane-frontend"
+compatibility_date = "2025-03-07"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"
+
+# Cloudflare Pages configuration
+pages_build_output_dir = "dist"
+
+# Environment variables for the frontend
+[vars]
+VITE_API_BASE_URL = "https://core-agent-chatroom-api.hacolby.workers.dev"
+
+# In production, you might want to proxy through Cloudflare Pages Functions
+# [build]
+# command = "npm run build"
+#
+# [[pages_build_config]]
+# # Build command for Pages
+# build_command = "npm run build"
+# # Directory where build artifacts are placed
+# destination_dir = "dist"
+# # Root directory of your project
+# root_dir = "."
+# # Environment variables
+# [pages_build_config.vars]
+# VITE_API_BASE_URL = "https://core-agent-chatroom-api.hacolby.workers.dev"

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vibe Systems • Health Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@heroui/core@latest/dist/hero-ui.css" />
+  </head>
+  <body>
+    <div id="nav"></div>
+
+    <main class="pt-24 pb-16">
+      <section class="inner max-w-5xl mx-auto px-4 fade-up">
+        <div class="hero-ui-card mb-8">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h1 class="text-4xl font-semibold text-slate-50">System Health</h1>
+              <p class="text-slate-200/80 mt-2 max-w-2xl">
+                Monitor automated tests, trigger on-demand diagnostics, and review Workers AI remediation suggestions in
+                real time.
+              </p>
+              <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 text-sm text-slate-200/70" id="health-metrics">
+                <div>
+                  <dt>Active Tests</dt>
+                  <dd class="text-lg font-semibold text-indigo-200" id="metric-tests">—</dd>
+                </div>
+                <div>
+                  <dt>Last Session</dt>
+                  <dd class="text-lg font-semibold text-indigo-200" id="metric-last-session">—</dd>
+                </div>
+                <div>
+                  <dt>Pass Rate</dt>
+                  <dd class="text-lg font-semibold text-indigo-200" id="metric-last-pass">—</dd>
+                </div>
+                <div>
+                  <dt>AI Suggestions</dt>
+                  <dd class="text-lg font-semibold text-indigo-200" id="metric-ai">—</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="flex flex-col gap-3">
+              <button class="health-button" id="run-tests-btn" type="button">
+                <span class="loader hidden" id="run-tests-spinner"></span>
+                Run Health Tests
+              </button>
+              <button class="btn-secondary" id="refresh-latest" type="button">Refresh Latest Session</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-ui-card mb-10" id="health-tests">
+          <h2 class="text-2xl font-semibold text-slate-50 mb-4">Active Test Definitions</h2>
+          <div id="tests-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </div>
+
+        <div class="hero-ui-card mb-10" id="health-task-stats">
+          <h2 class="text-2xl font-semibold text-slate-50 mb-4">Task &amp; Agent Stats</h2>
+          <div class="metrics-grid" id="health-task-counts">
+            <div class="metric-card">
+              <span>Pending</span>
+              <h3 id="health-count-pending">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>In Progress</span>
+              <h3 id="health-count-in-progress">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>Blocked</span>
+              <h3 id="health-count-blocked">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>Done</span>
+              <h3 id="health-count-done">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>Total</span>
+              <h3 id="health-count-total">0</h3>
+            </div>
+          </div>
+          <div class="agent-panels mt-6">
+            <div class="v-card">
+              <h3 class="text-lg font-semibold text-indigo-100 mb-3">Agent Activity</h3>
+              <ul id="health-agent-activity" class="activity-list"></ul>
+            </div>
+            <div class="v-card">
+              <h3 class="text-lg font-semibold text-indigo-100 mb-3">Blocked Agents</h3>
+              <div id="health-blocked-list" class="blocked-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-ui-card" id="latest-session">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-2xl font-semibold text-slate-50">Latest Session Results</h2>
+              <p class="text-slate-300/70 text-sm" id="latest-session-meta">No session yet.</p>
+            </div>
+            <div class="status-pill" id="latest-session-status">—</div>
+          </div>
+          <div class="overflow-auto">
+            <table>
+              <thead>
+                <tr class="text-left text-xs uppercase tracking-[0.2em] text-slate-400">
+                  <th>Test</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                  <th>AI Insight</th>
+                </tr>
+              </thead>
+              <tbody id="latest-session-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-10 text-sm text-slate-300/80">
+          <p>
+            Need raw logs? Use the
+            <span class="tooltip">
+              `/rpc`
+              <span class="tooltip-content">
+                POST /rpc with method `tests.run` or `tasks.list` to mirror the REST/WebSocket behavior.
+              </span>
+            </span>
+            surface or connect via WebSocket for streaming task updates.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <template id="test-card-template">
+      <article class="v-card">
+        <header class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-semibold text-indigo-100"></h3>
+          <div class="badges-container flex gap-1"></div>
+        </header>
+        <p class="text-slate-200/75 text-xs"></p>
+      </article>
+    </template>
+
+    <template id="session-row-template">
+      <tr>
+        <td class="py-3"></td>
+        <td class="py-3"><span class="status-pill"></span></td>
+        <td class="py-3 text-slate-200/70 text-sm"></td>
+        <td class="py-3 text-slate-200/70 text-sm"></td>
+      </tr>
+    </template>
+
+    <script src="/client.js" type="module"></script>
+  </body>
+</html>

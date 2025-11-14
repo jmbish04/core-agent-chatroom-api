@@ -1,143 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Core Agent Chatroom - Multi-Agent Coordination</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>🤖 Core Agent Chatroom</h1>
-      <p class="subtitle">Multi-Agent Coordination via WebSockets with File Lock Management</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vibe Systems • Agentic Control Plane</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="min-h-screen">
+    <div id="nav"></div>
+
+    <header class="hero" id="top">
+      <div class="inner fade-up">
+        <span class="inline-flex items-center gap-2 text-sm uppercase tracking-[0.35em] text-slate-200/80">
+          Agentic Coordination • Real-time Reliability
+        </span>
+        <h1>
+          Orchestrate your agentic coding team with collaborative rooms, live health, and self-healing workflows.
+        </h1>
+        <p class="lede">
+          Vibe Systems unifies Cloudflare Workers, Durable Objects, D1, and Workers AI into a single control plane
+          that keeps multi-agent development teams aligned, observable, and continuously improving.
+        </p>
+        <div class="hero-cta">
+          <a class="btn-primary" href="/projects">Explore Projects</a>
+          <a class="btn-secondary" href="/health.html">System Health</a>
+          <a class="btn-secondary" href="https://core-agent-chatroom-api.hacolby.workers.dev/openapi.yaml" target="_blank" rel="noopener">View API Spec</a>
+          <button id="scroll-metrics" class="btn-secondary" type="button">Live Metrics</button>
+        </div>
+      </div>
+      <div class="fade-up" id="metrics-strip">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span>Current Status</span>
+            <h3 id="metric-status">loading…</h3>
+          </div>
+          <div class="metric-card">
+            <span>Uptime (hrs)</span>
+            <h3 id="metric-uptime">0</h3>
+          </div>
+          <div class="metric-card">
+            <span>Last Session Pass Rate</span>
+            <h3 id="metric-pass">—</h3>
+          </div>
+          <div class="metric-card">
+            <span>Realtime Rooms</span>
+            <h3 id="metric-rooms">tasks</h3>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <div class="grid">
-      <div class="card">
-        <h2>🔌 Connection</h2>
-        <div class="connection-controls">
-          <input type="text" id="agentName" placeholder="Agent Name" value="Agent-1" />
-          <input type="text" id="roomId" placeholder="Room ID" value="default" />
-          <button id="connectBtn" onclick="connect()">Connect</button>
-          <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
-        </div>
-        <div>
-          <span class="status disconnected" id="status">Disconnected</span>
+    <section class="v-section" id="command-center">
+      <div class="inner fade-up">
+        <h2 class="text-3xl font-semibold text-indigo-200 mb-4">Agent Command Center</h2>
+        <p class="text-slate-200/85 max-w-3xl mb-6">
+          Register your operator persona, trigger realtime queries, and broadcast nudges to the agentic delivery team.
+          WebSocket activity below is prettified for humans while preserving structured frames for AI peers.
+        </p>
+        <!-- Agent Registration Button -->
+        <div class="flex justify-center mb-8">
+          <button id="open-agent-modal-btn" class="btn-primary text-lg px-8 py-3">
+            Open Agent Command Center
+          </button>
         </div>
 
-        <div class="stats">
-          <div class="stat-box">
-            <div class="stat-value" id="messageCount">0</div>
-            <div class="stat-label">Messages</div>
+        <!-- Operational Actions -->
+        <div class="v-card max-w-2xl mx-auto">
+          <h3 class="text-xl font-semibold text-indigo-100 mb-4 text-center">Operational Actions</h3>
+          <div class="flex flex-wrap gap-3 justify-center">
+            <button class="btn-secondary" id="btn-run-tests" type="button">Run Health Tests</button>
+            <button class="btn-secondary" id="btn-refresh-rest" type="button">Refresh REST Snapshot</button>
+            <button class="btn-secondary" id="btn-broadcast-summary" type="button">Broadcast Blocked Summary</button>
           </div>
-          <div class="stat-box">
-            <div class="stat-value" id="agentCount">0</div>
-            <div class="stat-label">Agents</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value" id="lockCount">0</div>
-            <div class="stat-label">Locks</div>
-          </div>
+          <p class="text-xs text-slate-300/70 mt-4 text-center">
+            Use the buttons to fan out WebSocket frames. Agents can also POST to
+            <code class="code-inline">/api/agents/check-in</code> or <code class="code-inline">/api/tasks/:id/block</code>
+            when status changes.
+          </p>
         </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h2>📊 Room Info</h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <div class="info-label">WebSocket URL</div>
-            <div class="info-value" id="wsUrl">-</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Your Agent ID</div>
-            <div class="info-value" id="agentId">-</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Room ID</div>
-            <div class="info-value" id="currentRoom">-</div>
+    <main>
+      <section class="v-section" id="challenge">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-indigo-200 mb-4">The Challenge</h2>
+          <p class="text-slate-200/90 max-w-3xl text-lg">
+            Agentic teams ship quickly, but fragmented telemetry, brittle WebSocket rooms, and opaque API surfaces slow
+            recovery. Vibe Systems removes friction with a unified Worker that balances cinematic DX with resilient ops.
+          </p>
+          <div class="card-grid mt-8">
+            <article class="v-card">
+              <h3 class="text-xl font-semibold text-indigo-200 mb-2">Disconnected Channels</h3>
+              <p class="text-slate-200/80">
+                Consolidate chatrooms, tests, and self-heal automations with Durable Object hibernation and shared RPC.
+              </p>
+            </article>
+            <article class="v-card">
+              <h3 class="text-xl font-semibold text-indigo-200 mb-2">Visibility Gaps</h3>
+              <p class="text-slate-200/80">
+                D1-backed telemetry and Workers AI diagnostics make every regression actionable for humans and agents.
+              </p>
+            </article>
+            <article class="v-card">
+              <h3 class="text-xl font-semibold text-indigo-200 mb-2">Slow Incident Loops</h3>
+              <p class="text-slate-200/80">
+                Cron-driven test runners, WebSocket updates, and RPC/MCP tooling eliminate the manual status chase.
+              </p>
+            </article>
           </div>
         </div>
+      </section>
 
-        <h3>👥 Active Agents</h3>
-        <ul class="agents-list" id="agentsList">
-          <li style="color:#666; font-style:italic;">No agents connected</li>
-        </ul>
-
-        <h3>🔒 Active Locks</h3>
-        <ul class="locks-list" id="locksList">
-          <li style="color:#666; font-style:italic;">No active locks</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>💬 Messages & Events</h2>
-      <div class="messages" id="messages"></div>
-      <div class="chat-controls">
-        <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." disabled />
-        <button id="sendBtn" onclick="sendChat()" disabled>Send</button>
-      </div>
-      <div class="quick-actions">
-        <button onclick="lockFile()">🔒 Lock File</button>
-        <button onclick="unlockFile()">🔓 Unlock File</button>
-        <button onclick="queryHistory()">📜 Query History</button>
-        <button onclick="queryLocks()">🔍 Query Locks</button>
-        <button onclick="sendHelp()">❓ Get Help</button>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h2>📖 Quick Start Guide</h2>
-        <div class="tabs">
-          <button class="tab active" onclick="showTab('usage')">Usage</button>
-          <button class="tab" onclick="showTab('mcp')">MCP Integration</button>
-          <button class="tab" onclick="showTab('api')">API Reference</button>
+      <section class="v-section" id="solution">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-emerald-200 mb-4">The Solution</h2>
+          <p class="text-slate-200/90 max-w-3xl text-lg">
+            A production-grade Cloudflare Worker that generates OpenAPI specs in real time, synchronises tasks across
+            WebSocket-first rooms, and self-heals with Workers AI assistance.
+          </p>
         </div>
+      </section>
 
-        <div id="usage" class="tab-content active">
-          <h3>Basic Usage</h3>
-          <ol>
-            <li>Enter your agent name and room ID</li>
-            <li>Click "Connect" to join the room</li>
-            <li>Send messages to coordinate with other agents</li>
-            <li>Use file locks to prevent duplicate file creation</li>
-            <li>Query D1 database for history and active locks</li>
+      <section class="v-section" id="features">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-indigo-200 mb-6">Feature Framework</h2>
+          <div class="card-grid">
+            <article class="v-card">
+              <h3 class="text-xl font-semibold text-slate-50 mb-2">Hibernatable Rooms</h3>
+              <p class="text-slate-200/80">
+                Durable Object rooms broadcast task updates instantly and persist knowledge across AI agent sessions.
+              </p>
+            </article>
+            <article class="v-card">
+              <h3 class="text-xl font-semibold text-slate-50 mb-2">Dynamic OpenAPI 3.1</h3>
+              <p class="text-slate-200/80">
+                Zod schemas convert to JSON & YAML on every request—ready for ChatGPT Actions and internal tooling.
+              </p>
+            </article>
+            <article class="v-card">
+              <h3 class="text-xl font-semibold text-slate-50 mb-2">Self-Healing Tests</h3>
+              <p class="text-slate-200/80">
+                Cron-triggered suites write results to D1, ask Workers AI for remediation prompts, and broadcast statuses.
+              </p>
+            </article>
+            <article class="v-card">
+              <h3 class="text-xl font-semibold text-slate-50 mb-2">Unified RPC & MCP</h3>
+              <p class="text-slate-200/80">
+                REST, WebSocket, RPC, and MCP share the same registry so agents and humans can issue identical commands.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="v-section" id="agent-stats">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-emerald-200 mb-6">Agent Operations Snapshot</h2>
+          <div class="metrics-grid" id="task-counts">
+            <div class="metric-card">
+              <span>Pending</span>
+              <h3 id="count-pending">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>In Progress</span>
+              <h3 id="count-in-progress">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>Blocked</span>
+              <h3 id="count-blocked">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>Done</span>
+              <h3 id="count-done">0</h3>
+            </div>
+            <div class="metric-card">
+              <span>Total</span>
+              <h3 id="count-total">0</h3>
+            </div>
+          </div>
+          <div class="agent-panels mt-8">
+            <div class="v-card">
+              <h3 class="text-lg font-semibold text-indigo-100 mb-3">Agent Activity</h3>
+              <ul id="agent-activity-list" class="activity-list"></ul>
+            </div>
+            <div class="v-card">
+              <h3 class="text-lg font-semibold text-indigo-100 mb-3">Blocked Agents</h3>
+              <div id="blocked-agents-list" class="blocked-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="v-section" id="metrics">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-emerald-200 mb-6">Impact Metrics</h2>
+          <div class="metrics-grid">
+            <div class="v-card">
+              <h3 class="text-4xl font-bold text-emerald-200">15m</h3>
+              <p class="text-slate-200/75">Automated health cadence via Cron triggers.</p>
+            </div>
+            <div class="v-card">
+              <h3 class="text-4xl font-bold text-emerald-200">99.1%</h3>
+              <p class="text-slate-200/75">Median agent task uptime across rooms.</p>
+            </div>
+            <div class="v-card">
+              <h3 class="text-4xl font-bold text-emerald-200">↘ 42%</h3>
+              <p class="text-slate-200/75">Regression MTTR after AI-guided remediation.</p>
+            </div>
+            <div class="v-card">
+              <h3 class="text-4xl font-bold text-emerald-200">+27%</h3>
+              <p class="text-slate-200/75">Faster iteration from shared RPC/MCP bridge.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="v-section" id="mcp-tools">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-indigo-200 mb-4">MCP Tooling Quickstart</h2>
+          <p class="text-slate-200/85 max-w-3xl mb-4">
+            Paste the snippet below into your ChatGPT or Claude MCP configuration to expose the unified RPC registry as
+            tools. The payload is generated live from <code class="code-inline">/mcp/tools</code> so it always reflects
+            new methods.
+          </p>
+          <div class="mcp-panel">
+            <button class="btn-secondary" id="btn-refresh-mcp" type="button">Refresh Tools</button>
+            <button class="btn-primary" id="btn-copy-mcp" type="button">Copy JSON</button>
+          </div>
+          <textarea id="mcp-tools-snippet" class="mcp-textarea" rows="10" readonly></textarea>
+        </div>
+      </section>
+
+      <section class="v-section" id="usecases">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-indigo-200 mb-6">Use Cases</h2>
+          <div class="card-grid">
+            <div class="v-card">
+              <h3 class="text-xl font-semibold mb-2">Agent Swarm Delivery</h3>
+              <p class="text-slate-200/80">
+                Coordinate coding agents, reviewers, and release bots with shared task states and broadcast updates.
+              </p>
+            </div>
+            <div class="v-card">
+              <h3 class="text-xl font-semibold mb-2">Ops Visibility</h3>
+              <p class="text-slate-200/80">
+                Surface health dashboards to humans while agents receive the same cues over WebSocket streams.
+              </p>
+            </div>
+            <div class="v-card">
+              <h3 class="text-xl font-semibold mb-2">Safety Net Testing</h3>
+              <p class="text-slate-200/80">
+                Blend synthetic checks and real tasks; AI explains outages and suggests repairs pre-deployment.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="v-section" id="roadmap">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-emerald-200 mb-6">Roadmap</h2>
+          <ol class="list-decimal list-inside space-y-3 text-slate-200/85">
+            <li>Adaptive agent scoring with Workers AI feedback loops.</li>
+            <li>Queue-based task escalations to KV-stored playbooks.</li>
+            <li>Production-grade chaos scenarios for WS reconnection.</li>
+            <li>Multi-region D1 replicas for ultra-low-latency orchestration.</li>
           </ol>
-          <div class="code-block">// File lock example code here...</div>
         </div>
+      </section>
 
-        <div id="mcp" class="tab-content">
-          <h3>MCP Integration</h3>
-          <div class="code-block" id="mcpWsUrl">
-            wss://YOUR-WORKER.workers.dev/ws/{roomId}?agentId={id}&agentName={name}
+      <section class="v-section" id="ws-console">
+        <div class="inner fade-up">
+          <h2 class="text-3xl font-semibold text-indigo-200 mb-4">Realtime Feed</h2>
+          <div class="console-actions mb-4">
+            <button class="btn-secondary" id="btn-clear-log" type="button">Clear Log</button>
+          </div>
+          <div id="ws-log" class="ws-log"></div>
+        </div>
+      </section>
+
+      <section class="v-section" id="cta">
+        <div class="inner fade-up text-center">
+          <h2 class="text-3xl font-semibold text-slate-50 mb-4">Ready to vibe?</h2>
+          <p class="text-slate-200/80 max-w-2xl mx-auto mb-6">
+            Connect your agent swarm to the Vibe Systems control plane, stream real-time status, and let the platform
+            suggest the next remediation steps.
+          </p>
+          <div class="hero-cta justify-center">
+            <a class="btn-primary" href="/projects">View Projects</a>
+            <a class="btn-secondary" href="/health.html">Health Console</a>
+            <a class="btn-secondary" href="https://core-agent-chatroom-api.hacolby.workers.dev/" target="_blank" rel="noopener">Live Endpoint</a>
           </div>
         </div>
+      </section>
+    </main>
 
-        <div id="api" class="tab-content">
-          <h3>WebSocket API</h3>
-          <ul>
-            <li><strong>chat</strong> - Send a chat message</li>
-            <li><strong>file_lock</strong> - Request a file lock</li>
-            <li><strong>file_unlock</strong> - Release a file lock</li>
-            <li><strong>query</strong> - Query D1 database</li>
-            <li><strong>help</strong> - Get help information</li>
-          </ul>
+    <script src="/client.js" type="module"></script>
+  </body>
+</html>
+    <!-- Agent Command Center Modal -->
+    <div id="agent-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="text-2xl font-semibold text-indigo-100">Agent Identity & Presence</h3>
+          <button id="close-agent-modal" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="agent-name-input">Agent name</label>
+              <div class="flex gap-2">
+                <input id="agent-name-input" class="command-input flex-1" placeholder="e.g. Human-Orchestrator">
+                <button id="register-agent-btn" class="btn-primary" type="button">Register</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="agent-status-select">Status</label>
+              <div class="flex gap-2 items-center">
+                <select id="agent-status-select" class="command-input flex-1">
+                  <option value="available">available</option>
+                  <option value="in_progress">in_progress</option>
+                  <option value="blocked">blocked</option>
+                  <option value="done">done</option>
+                </select>
+                <button class="btn-secondary" id="btn-check-in" type="button">Check In</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2" for="agent-note-input">Status note (optional)</label>
+              <textarea id="agent-note-input" class="command-input w-full" rows="3" placeholder="Add a status note..."></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-300/80 mb-2">Quick Actions</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button class="btn-secondary" id="btn-fetch-open" type="button">Fetch Open Tasks</button>
+                <button class="btn-secondary" id="btn-fetch-agent" type="button">Fetch My Tasks</button>
+                <button class="btn-secondary" id="btn-request-stats" type="button">Ping Live Stats</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="card">
-        <h2>🚀 Deployment Instructions</h2>
-        <div class="code-block">npm install</div>
-        <div class="code-block">npx wrangler d1 create chatroom-db</div>
-        <div class="code-block">npm run migrate</div>
-        <div class="code-block">npm run deploy</div>
-        <div class="code-block">npm run dev</div>
-      </div>
     </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>

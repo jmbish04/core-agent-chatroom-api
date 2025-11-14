@@ -4,12 +4,28 @@
   "description": "Cloudflare Worker with Durable Objects for multi-agent coordination via WebSockets",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "setup": "wrangler d1 create chatroom-db && npm run migrate",
-    "migrate": "wrangler d1 execute chatroom-db --remote --file=./schema.sql",
-    "migrate:local": "wrangler d1 execute chatroom-db --local --file=./schema.sql",
-    "tail": "wrangler tail"
+    "predev": "npm run build:css",
+    "dev": "pkill -f 'wrangler.*6528' || true; wrangler dev --port=6528",
+    "test": "./test-runner.sh",
+    "test:quick": "node tests/project-management.test.js",
+    "test:watch": "nodemon --exec \"npm run test:quick\" tests/project-management.test.js",
+    "build": "npm run build:worker && npm run build:css",
+    "build:worker": "tsc",
+    "build:css": "tailwindcss -i ./src/styles/main.css -o ./public/styles.css --minify",
+    "dev:css": "tailwindcss -i ./src/styles/main.css -o ./public/styles.css --watch",
+    "deploy": "npm run build && npm run migrate && wrangler deploy",
+    "migrate": "wrangler d1 migrations apply DB --remote",
+    "migrate:preview": "wrangler d1 migrations apply DB_PREVIEW --remote",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "migrate:preview:local": "wrangler d1 migrations apply DB_PREVIEW --local",
+    "tail": "wrangler tail",
+    "frontend:install": "cd frontend && npm install",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:deploy": "cd frontend && npm run deploy",
+    "dev:full": "concurrently \"npm run dev\" \"npm run frontend:dev\"",
+    "start": "npm run dev:full",
+    "setup": "npm install && npm run frontend:install"
   },
   "keywords": [
     "cloudflare",
@@ -23,7 +39,20 @@
   "license": "MIT",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241127.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
+    "tailwindcss": "^3.4.18",
     "typescript": "^5.3.3",
-    "wrangler": "^3.90.0"
+    "wrangler": "^4.48.0"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^5.2.1",
+    "agents": "^0.2.21",
+    "drizzle-orm": "^0.33.0",
+    "hono": "^4.6.6",
+    "kysely": "^0.27.6",
+    "kysely-d1": "^0.4.0",
+    "yaml": "^2.5.0",
+    "zod": "^3.23.8"
   }
 }
