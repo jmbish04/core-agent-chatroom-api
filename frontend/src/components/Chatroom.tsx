@@ -22,7 +22,7 @@ import { useStore, Message } from '../lib/store'
 import { WebSocketClient } from '../lib/api'
 
 export function Chatroom() {
-  const { agent, selectedProjectId, messages, selectedThreadId, addMessage, setMessages } = useStore()
+  const { agent, selectedProjectId, messages, selectedThreadId, addMessage } = useStore()
   const [newMessage, setNewMessage] = useState('')
   const [wsClient, setWsClient] = useState<WebSocketClient | null>(null)
   const [isConnected, setIsConnected] = useState(false)
