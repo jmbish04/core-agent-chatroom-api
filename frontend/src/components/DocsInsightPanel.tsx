@@ -299,8 +299,9 @@ export function DocsInsightPanel({
 export const useDocsInsights = () => {
   const { showDocsInsight, toggleDocsInsight } = useStore()
 
-  const openDocsPanel = (query?: string, topic?: string) => {
-    // You could set initial query/topic in the store if needed
+  const openDocsPanel = () => {
+    // If you intend to use query/topic, you should set them in the store here.
+    // For example: useStore.getState().setInitialDocsQuery({ query, topic });
     toggleDocsInsight()
   }
 
