@@ -64,10 +64,16 @@
       "migrations_dir": "migrations"
     }
   ],
+  // Analytics Engine binding (from .toml)
+  // "analytics_engine_datasets": [
+  //   {
+  //     "binding": "ANALYTICS"
+  //   }
+  // ],
   "triggers": {
     "crons": ["*/5 * * * *"]
   },
-  "build": {
-    "command": "npx tsc"
-  }
+//  "build": {
+//    "command": "npx tsc"
+//  }
 }
